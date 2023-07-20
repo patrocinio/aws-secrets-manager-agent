@@ -1,15 +1,12 @@
-# Use this code snippet in your app.
-# If you need more information about configurations
-# or implementing the sample code, visit the AWS docs:
-# https://aws.amazon.com/developer/language/python/
-
 import boto3
 from botocore.exceptions import ClientError
 
+from flask import Flask
 
-def get_secret():
+app = Flask(__name__)
 
-    secret_name = "my_secret"
+def get_secret(secret_name):
+
     region_name = "us-east-1"
 
     print ("Creating session")
@@ -36,5 +33,8 @@ def get_secret():
 
     return secret
 
-secret = get_secret()
-print ("Secret: ", secret)
+@app.route("/<secret_name>")
+def run(secret_name):
+    secret = get_secret(secret_name)
+    print ("Secret: ", secret)
+    return secret
