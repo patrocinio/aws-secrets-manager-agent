@@ -5,19 +5,16 @@ from flask import Flask
 
 app = Flask(__name__)
 
+region_name = "us-east-1"
+
+# Create a Secrets Manager client
+session = boto3.session.Session()
+client = session.client(
+    service_name='secretsmanager',
+    region_name=region_name
+)
+
 def get_secret(secret_name):
-
-    region_name = "us-east-1"
-
-    print ("Creating session")
-
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-
     try:
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
