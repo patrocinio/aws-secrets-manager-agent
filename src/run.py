@@ -1,5 +1,8 @@
-import boto3
 from botocore.exceptions import ClientError
+
+import botocore 
+import botocore.session 
+from aws_secretsmanager_caching import SecretCache, SecretCacheConfig 
 
 from flask import Flask
 
@@ -7,26 +10,18 @@ app = Flask(__name__)
 
 region_name = "us-east-1"
 
-# Create a Secrets Manager client
-session = boto3.session.Session()
-client = session.client(
-    service_name='secretsmanager',
-    region_name=region_name
-)
+client = botocore.session.get_session().create_client('secretsmanager')
+cache_config = SecretCacheConfig()
+cache = SecretCache( config = cache_config, client = client)
 
 def get_secret(secret_name):
     try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
+        secret = cache.get_secret_string(secret_name)
     except ClientError as e:
         # For a list of exceptions thrown, see
         # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         print ("Exception: ", e)
         raise e
-
-    # Decrypts secret using the associated KMS key.
-    secret = get_secret_value_response['SecretString']
 
     return secret
 
