@@ -1,5 +1,9 @@
 run:
-	cd src; python3.9 -m flask --app run run
+	go run agent.go
 
-install:
-	pip3.9 install boto3 aws_secretsmanager_caching
+setup:
+	-go mod init aws-secrets-manager-agent
+	go get github.com/aws/aws-sdk-go-v2/aws
+	go get github.com/aws/aws-sdk-go-v2/config
+	go get github.com/aws/aws-sdk-go-v2/service/secretsmanager
+
