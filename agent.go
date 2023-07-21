@@ -7,23 +7,19 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+
+	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	secretName := "my_secret"
-	region := "us-east-1"
+var svc *secretsmanager.Client
 
-	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Create Secrets Manager client
-	svc := secretsmanager.NewFromConfig(config)
+func getSecret(c *gin.Context) {
+	secretName := c.Param("secret_name")
 
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId:     aws.String(secretName),
@@ -41,4 +37,23 @@ func main() {
 	var secretString string = *result.SecretString
 
 	fmt.Printf("Secret: %s\n", secretString)
+
+	c.IndentedJSON(http.StatusOK, secretString)
+}
+
+func main() {
+	region := "us-east-1"
+
+	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create Secrets Manager client
+	svc = secretsmanager.NewFromConfig(config)
+
+	router := gin.Default()
+	router.GET("/secret/:secret_name", getSecret)
+
+	router.Run("localhost:8080")
 }
