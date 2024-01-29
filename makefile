@@ -1,5 +1,5 @@
 run:
-	go run agent.go
+	go run agent.go &
 
 setup:
 	go env -w GOPROXY=direct
