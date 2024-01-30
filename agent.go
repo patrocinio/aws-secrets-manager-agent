@@ -18,6 +18,27 @@ import (
 
 var svc *secretsmanager.Client
 
+func testSecret() {
+	secretName := "MySecret"
+
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId:     aws.String(secretName),
+		VersionStage: aws.String("AWSCURRENT"), // VersionStage defaults to AWSCURRENT if unspecified
+	}
+
+	result, err := svc.GetSecretValue(context.TODO(), input)
+	if err != nil {
+		// For a list of exceptions thrown, see
+		// https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+		log.Fatal(err.Error())
+	}
+
+	// Decrypts secret using the associated KMS key.
+	var secretString string = *result.SecretString
+
+	fmt.Printf("Secret: %s\n", secretString)
+}
+
 func getSecret(c *gin.Context) {
 	secretName := c.Param("secret_name")
 
@@ -42,6 +63,8 @@ func getSecret(c *gin.Context) {
 }
 
 func main() {
+	testSecret()
+
 	region := "us-east-1"
 
 	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
