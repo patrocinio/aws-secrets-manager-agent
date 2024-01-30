@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 
 	"github.com/gin-gonic/gin"
@@ -62,19 +63,19 @@ func getSecret(c *gin.Context) {
 }
 
 func main() {
+
+	region := "us-east-1"
+
+	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create Secrets Manager client
+	svc = secretsmanager.NewFromConfig(config)
+
 	testSecret()
-
 	/*
-		region := "us-east-1"
-
-		config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// Create Secrets Manager client
-		svc = secretsmanager.NewFromConfig(config)
-
 		router := gin.Default()
 		router.GET("/secret/:secret_name", getSecret)
 
