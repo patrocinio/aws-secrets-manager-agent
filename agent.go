@@ -55,5 +55,5 @@ func main() {
 	router := gin.Default()
 	router.GET("/secret/:secret_name", getSecret)
 
-	router.Run("localhost:8080")
+	router.Run()
 }
