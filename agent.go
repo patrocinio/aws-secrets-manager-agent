@@ -42,7 +42,7 @@ func getSecret(c *gin.Context) {
 }
 
 func returnOK(c *gin.Context) {
-	c.JSON(http.StatusOK)
+	c.JSON(http.StatusOK, "I'm healthy")
 }
 
 func main() {
