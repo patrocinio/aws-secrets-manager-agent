@@ -41,6 +41,10 @@ func getSecret(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, secretString)
 }
 
+func returnOK(c *gin.Context) {
+	c.JSON(http.StatusOK)
+}
+
 func main() {
 
 	region := "us-east-1"
@@ -55,6 +59,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/secret/:secret_name", getSecret)
+	router.GET("/health", returnOK)
 
 	router.Run()
 }
