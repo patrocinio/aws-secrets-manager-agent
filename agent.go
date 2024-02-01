@@ -19,7 +19,8 @@ import (
 var svc *secretsmanager.Client
 
 func getSecret(c *gin.Context) {
-	secretName := c.Param("secret_name")
+	secretName := c.Query("secretId")
+	fmt.Printf("secretName: %s\n", secretName)
 
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId:     aws.String(secretName),
@@ -58,8 +59,8 @@ func main() {
 	svc = secretsmanager.NewFromConfig(config)
 
 	router := gin.Default()
-	router.GET("/secret/:secret_name", getSecret)
+	router.GET("/secretsmanager/get", getSecret)
 	router.GET("/health", returnOK)
 
-	router.Run()
+	router.Run(":2773")
 }
