@@ -12,12 +12,13 @@ import (
 var secretCache *secretcache.Cache
 
 func getSecret(c *gin.Context) {
-	secretName := c.Query("secretId")
-	fmt.Printf("secretName: %s\n", secretName)
+	secretId := c.Query("secretId")
+	fmt.Printf("secretId: %s\n", secretId)
 
-	result, _ := secretCache.GetSecretString(secretName)
+	result, error := secretCache.GetSecretString(secretId)
 
 	fmt.Printf("result: %s\n", result)
+	fmt.Printf("result: %s\n", error)
 
 	c.IndentedJSON(http.StatusOK, result)
 
